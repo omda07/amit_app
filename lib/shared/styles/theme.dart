@@ -1,7 +1,10 @@
+import 'package:amit_app/shared/resources/color_manager.dart';
+import 'package:amit_app/shared/resources/fonts_manager.dart';
+import 'package:amit_app/shared/resources/values_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-const defualtColor = Colors.red;
+var defualtColor = ColorManager.swatch;
 ThemeData lightTheme = ThemeData(
   backgroundColor: Colors.white,
   appBarTheme: const AppBarTheme(
@@ -14,14 +17,14 @@ ThemeData lightTheme = ThemeData(
     backgroundColor: Colors.white,
     elevation: 0.0,
     titleTextStyle: TextStyle(
-      fontFamily: 'Jannah',
+      fontFamily: FontConstants.fontFamily,
       color: Colors.black,
       fontSize: 20.0,
       fontWeight: FontWeight.bold,
     ),
   ),
   scaffoldBackgroundColor: Colors.white,
-  bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+  bottomNavigationBarTheme: BottomNavigationBarThemeData(
     type: BottomNavigationBarType.fixed,
     selectedItemColor: defualtColor,
     elevation: 10.0,
@@ -40,7 +43,15 @@ ThemeData lightTheme = ThemeData(
       height: 1.3,
     ),
   ),
-  iconTheme: IconThemeData(color: Colors.red),
-  fontFamily: 'Jannah',
-  primarySwatch: defualtColor,
+  iconTheme: IconThemeData(color: defualtColor),
+  fontFamily: FontConstants.fontFamily,
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppSize.s16),
+      ),
+      padding: EdgeInsets.zero,
+    ),
+  ),
+  primarySwatch: Colors.deepOrange,
 );

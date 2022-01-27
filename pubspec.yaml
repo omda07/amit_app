@@ -31,6 +31,12 @@ dependencies:
     sdk: flutter
   bloc: ^8.0.0
   flutter_bloc: ^8.0.0
+  shared_preferences: ^2.0.11
+  dio: ^4.0.4
+  conditional_builder_null_safety: ^0.0.6
+  fluttertoast: ^8.0.8
+  carousel_slider: ^4.0.0
+  smooth_page_indicator: ^1.0.0+2
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -82,6 +88,19 @@ flutter:
     - family: IconBroken
       fonts:
         - asset: assets/fonts/icons.ttf
+
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/Montserrat-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Montserrat-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Montserrat-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Montserrat-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Montserrat-Light.ttf
+          weight: 300
   # fonts:
   #   - family: Schyler
   #     fonts:
