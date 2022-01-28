@@ -5,6 +5,7 @@ import 'package:amit_app/shared/resources/color_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+// onvording model
 class BoardingModel {
   final String image;
   final String title;
@@ -23,23 +24,24 @@ class OnBoardingScreen extends StatefulWidget {
 var boarderController = PageController();
 
 class _OnBoardingScreenState extends State<OnBoardingScreen> {
+  //List of onboarding model titles images
   List<BoardingModel> boarding = [
     BoardingModel(
         image: 'assets/images/onboard_1.jpg',
-        title: 'On Board 1 Title',
-        body: 'On Board 1 Body'),
+        title: 'AMIT Shop',
+        body: 'Discover new local products'),
     BoardingModel(
         image: 'assets/images/onboard_1.jpg',
-        title: 'On Board 2 Title',
-        body: 'On Board 2 Body'),
+        title: 'AMIT Shop',
+        body: 'Get all you want at one place'),
     BoardingModel(
         image: 'assets/images/onboard_1.jpg',
-        title: 'On Board 3 Title',
-        body: 'On Board 3 Body'),
+        title: 'AMIT Shop',
+        body: 'Get your Products NOW'),
   ];
 
   bool isLast = false;
-
+// save in cach memory that user open the app once
   void submit() {
     CacheHelper.saveData(key: 'onBoarding', value: true).then((value) {
       if (value) {
@@ -53,6 +55,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
     return Scaffold(
       appBar: AppBar(
         actions: [
+          //go to login screen
           TextButton(
             onPressed: submit,
             child: const Text('SKIP'),
@@ -90,6 +93,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
               ),
               Row(
                 children: [
+                  // indicator dot
                   SmoothPageIndicator(
                     count: 3,
                     controller: boarderController,

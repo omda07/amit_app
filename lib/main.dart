@@ -18,8 +18,8 @@ Future<void> main() async {
   var onBoarding = await CacheHelper.getData(key: 'onBoarding') ?? false;
   Widget widget;
 
-  token = CacheHelper.getData(key: 'token').toString();
-  print('token : ${token}');
+  token = CacheHelper.getData(key: token.toString()).toString();
+  print('token : ${token.toString()}');
   if (onBoarding) {
     if (token!.isNotEmpty) {
       widget = Home();
@@ -45,13 +45,17 @@ class MyApp extends StatelessWidget {
       : super(key: key);
   final bool onBoarding;
   final Widget startWidget;
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => AppCubit()
         ..getHomeData()
-        ..getCategories(),
+        ..getCategories()
+        ..getFavorites()
+        ..getCart()
+        ..getUserData(),
       child: BlocConsumer<AppCubit, AppStates>(
         listener: (context, state) {},
         builder: (context, state) {

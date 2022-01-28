@@ -40,6 +40,22 @@ class AppSuccessGetFavoritesState extends AppStates {}
 
 class AppErrorGetFavoritesState extends AppStates {}
 
+class AppLoadingGetCartState extends AppStates {}
+
+class AppSuccessGetCartState extends AppStates {}
+
+class AppErrorGetCartState extends AppStates {}
+
+class AppLoadingChangeCartsState extends AppStates {}
+
+class AppSuccessChangeCartsState extends AppStates {
+  final ChangeCartsModel model;
+
+  AppSuccessChangeCartsState(this.model);
+}
+
+class AppErrorChangeCartsState extends AppStates {}
+
 class AppLoadingGetUserDataState extends AppStates {}
 
 class AppSuccessGetUserDataState extends AppStates {

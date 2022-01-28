@@ -1,4 +1,6 @@
 import 'package:amit_app/layout/home/amit_cubit.dart';
+import 'package:amit_app/shared/resources/color_manager.dart';
+import 'package:amit_app/shared/resources/values_manager.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,7 +17,7 @@ class CategoriesScreen extends StatelessWidget {
           dragStartBehavior: DragStartBehavior.start,
           physics: const BouncingScrollPhysics(),
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(AppPadding.p8),
             child: Column(
               children: [
                 GridView.count(
@@ -23,7 +25,6 @@ class CategoriesScreen extends StatelessWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   crossAxisSpacing: 4,
                   mainAxisSpacing: 4,
-                  //  childAspectRatio: 1 / 1.75,
                   crossAxisCount: 2,
                   children: List.generate(
                     AppCubit.get(context).categoriesModel!.data!.data.length,
@@ -43,33 +44,39 @@ class CategoriesScreen extends StatelessWidget {
     );
   }
 
-  Widget buildCategoryItem(model, BuildContext context) => ClipRRect(
-        borderRadius: BorderRadius.circular(12.0),
-        child: Stack(
-          alignment: AlignmentDirectional.center,
-          children: [
-            Image(
-              image: NetworkImage('${model.image}'),
-              height: 200.0,
-              width: double.infinity,
-              fit: BoxFit.cover,
+  Widget buildCategoryItem(model, BuildContext context) => Stack(
+        alignment: AlignmentDirectional.center,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppSize.s12),
+              border: Border.all(color: ColorManager.swatch),
+              color: Colors.white,
             ),
-            Container(
-              color: Colors.black.withOpacity(
-                .5,
-              ),
-              width: 100,
-              child: Text(
-                '${model.name}',
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(AppSize.s12),
+              child: Image(
+                image: NetworkImage('${model.image}'),
+                height: 200.0,
+                width: double.infinity,
               ),
             ),
-          ],
-        ),
+          ),
+          Container(
+            color: Colors.black.withOpacity(
+              .5,
+            ),
+            width: 100,
+            child: Text(
+              '${model.name}',
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
       );
 }

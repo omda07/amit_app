@@ -43,6 +43,7 @@ class ProductModel {
   String? description;
   bool? inFavorites;
   bool? inCart;
+  ProductModel({this.id, this.name, this.price, this.image});
 
   ProductModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];

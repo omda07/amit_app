@@ -25,26 +25,27 @@ class Home extends StatelessWidget {
             ),
             actions: <Widget>[
               IconButton(
+                icon: Icon(
+                  IconBroken.Search,
+                  color: ColorManager.swatch,
+                ),
+                onPressed: () {},
+              ),
+              IconButton(
                 onPressed: () {
                   cubit.signOut(context);
                 },
-                icon: const Icon(
-                  Icons.power_settings_new_rounded,
-                  color: Colors.red,
+                icon: Icon(
+                  IconBroken.Logout,
+                  color: ColorManager.swatch,
                 ),
-              ),
-              IconButton(
-                icon: const Icon(IconBroken.Search),
-                onPressed: () {},
-              ),
-              IconButton(
-                icon: const Icon(IconBroken.Buy),
-                onPressed: () {},
               ),
               const SizedBox(width: AppSize.s12)
             ],
           ),
+          //Toggle between screens
           body: cubit.bottomScreens[cubit.currentIndex],
+          //bottom nav bar
           bottomNavigationBar: BottomNavigationBar(
             onTap: (index) {
               cubit.changeBottom(index);
@@ -64,8 +65,8 @@ class Home extends StatelessWidget {
                 label: 'Cart',
               ),
               BottomNavigationBarItem(
-                icon: Icon(IconBroken.More_Square),
-                label: 'Menu',
+                icon: Icon(IconBroken.Heart),
+                label: 'Favorite',
               ),
             ],
           ),

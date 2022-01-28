@@ -1,9 +1,11 @@
-import 'package:amit_app/layout/cart/cart_screen.dart';
+import 'package:amit_app/layout/cart/carts_screen.dart';
 import 'package:amit_app/layout/category/categories_screen.dart';
+import 'package:amit_app/layout/favorites/favorites_screen.dart';
 import 'package:amit_app/layout/login/login_screen.dart';
-import 'package:amit_app/layout/menu/menu_screen.dart';
 import 'package:amit_app/layout/products/products_screen.dart';
+import 'package:amit_app/models/cart_model.dart';
 import 'package:amit_app/models/categories_model.dart';
+import 'package:amit_app/models/change_carts_model.dart';
 import 'package:amit_app/models/change_favorites_model.dart';
 import 'package:amit_app/models/favourites_model.dart';
 import 'package:amit_app/models/home_model.dart';
@@ -27,17 +29,19 @@ class AppCubit extends Cubit<AppStates> {
   List<Widget> bottomScreens = [
     ProductsScreen(),
     CategoriesScreen(),
-    CartScreen(),
-    MenuScreen(),
+    CartsScreen(),
+    FavoritesScreen(),
   ];
 
   void changeBottom(int index) {
     currentIndex = index;
+    print(index);
     emit(AppChangeBottomNavState());
   }
 
   HomeModel? homeModel;
   Map<int, bool> favorites = {};
+  Map<int, bool> carts = {};
 
   void signOut(context) {
     CacheHelper.removeData(key: token.toString()).then((value) {
@@ -61,10 +65,11 @@ class AppCubit extends Cubit<AppStates> {
         favorites.addAll({
           element.id!: element.inFavorites!,
         });
+        carts.addAll({
+          element.id!: element.inCart!,
+        });
       }
 
-      print(homeModel!.data!.banners[0].image);
-      print(homeModel!.status);
       emit(AppSuccessHomeDataState());
     }).catchError((onError) {
       print(onError.toString());
@@ -80,8 +85,7 @@ class AppCubit extends Cubit<AppStates> {
       token: token.toString(),
     ).then((value) {
       categoriesModel = CategoriesModel.fromJson(value.data);
-      print(categoriesModel!.data!.data[0].image);
-      print(categoriesModel!.status);
+
       emit(AppSuccessCategoriesDataState());
     }).catchError((onError) {
       print(onError.toString());
@@ -104,7 +108,6 @@ class AppCubit extends Cubit<AppStates> {
       token: token,
     ).then((value) {
       changeFavoritesModel = ChangeFavoritesModel.fromJson(value.data);
-      print(value.data);
 
       if (!changeFavoritesModel!.status!) {
         favorites[productId] = !favorites[productId]!;
@@ -130,12 +133,60 @@ class AppCubit extends Cubit<AppStates> {
       token: token.toString(),
     ).then((value) {
       favoritesModel = FavoritesModel.fromJson(value.data);
-      //printFullText(value.data.toString());
 
       emit(AppSuccessGetFavoritesState());
     }).catchError((error) {
       print(error.toString());
       emit(AppErrorGetFavoritesState());
+    });
+  }
+
+  CartModel? cartModel;
+
+  void getCart() {
+    emit(AppLoadingGetCartState());
+
+    DioHelper.getData(
+      url: CARTS,
+      token: token.toString(),
+    ).then((value) {
+      cartModel = CartModel.fromJson(value.data);
+
+      emit(AppSuccessGetCartState());
+    }).catchError((error) {
+      print('cart ${error.toString()}');
+      emit(AppErrorGetCartState());
+    });
+  }
+
+  ChangeCartsModel? changeCartsModel;
+
+  void changeCarts(int productId) {
+    carts[productId] = !carts[productId]!;
+
+    emit(AppLoadingChangeCartsState());
+
+    DioHelper.postData(
+      url: CARTS,
+      data: {
+        'product_id': productId,
+      },
+      token: token,
+    ).then((value) {
+      changeCartsModel = ChangeCartsModel.fromJson(value.data);
+      print(value.data);
+
+      if (!changeCartsModel!.status!) {
+        carts[productId] = !carts[productId]!;
+      } else {
+        getCart();
+      }
+
+      emit(AppSuccessChangeCartsState(changeCartsModel!));
+    }).catchError((error) {
+      carts[productId] = !carts[productId]!;
+      print(error.toString());
+      emit(AppErrorChangeCartsState());
     });
   }
 
@@ -149,7 +200,6 @@ class AppCubit extends Cubit<AppStates> {
       token: token.toString(),
     ).then((value) {
       userModel = LoginModel.fromJson(value.data);
-      //printFullText(value.data.toString());
 
       emit(AppSuccessGetUserDataState(userModel!));
     }).catchError((error) {
@@ -175,7 +225,6 @@ class AppCubit extends Cubit<AppStates> {
       },
     ).then((value) {
       userModel = LoginModel.fromJson(value.data);
-      //printFullText(value.data.toString());
 
       emit(AppSuccessUpdateUserDataState(userModel!));
     }).catchError((error) {

@@ -22,17 +22,7 @@ class UserData {
   int? points;
   int? credit;
   String? token;
-  //   UserData({
-  //   this.id,
-  //   this.name,
-  //   this.email,
-  //   this.password,
-  //   this.phone,
-  //   this.image,
-  //   this.token,
-  //   this.points,
-  //   this.credit,
-  // });
+
 
     UserData.fromJson(Map<String,dynamic>json){
       id= json['id'];

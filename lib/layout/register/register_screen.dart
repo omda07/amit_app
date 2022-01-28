@@ -32,7 +32,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
           if (state is RegisterSuccessState) {
             if (state.loginModel.status!) {
               CacheHelper.saveData(
-                      key: 'token', value: state.loginModel.data!.token)
+                      key: token.toString(),
+                      value: state.loginModel.data!.token)
                   .then((value) {
                 token = state.loginModel.data!.token!;
                 navigateAndFinish(context, Home());
@@ -50,26 +51,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
             appBar: AppBar(),
             body: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(AppPadding.p20),
                 child: Column(
                   children: [
                     Container(
                       padding: EdgeInsets.all(AppPadding.p14),
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
+                        borderRadius: BorderRadius.circular(AppSize.s16),
                         color: ColorManager.swatch,
                       ),
                       child: Column(
                         // alignment: AlignmentDirectional.bottomCenter,
                         children: [
                           Text(
-                            'Orange Digital Ceneter',
+                            'Orange Digital Center',
                             style: Theme.of(context)
                                 .textTheme
                                 .headline5!
                                 .copyWith(
-                                    color: ColorManager.white,
+                                    color: Colors.white,
                                     fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(
@@ -93,7 +94,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               if (value == null || value.trim().isEmpty) {
                                 return 'please enter name';
                               }
-                              // return null;
                             },
                             keyboardType: TextInputType.text,
                             controller: nameController,
@@ -103,17 +103,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 IconBroken.Add_User,
                               ),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16.0),
+                                borderRadius:
+                                    BorderRadius.circular(AppSize.s16),
                               ),
                             ),
                           ),
                           const SizedBox(
-                            height: 15,
+                            height: AppSize.s14,
                           ),
                           TextFormField(
                             validator: (String? value) {
                               if (value == null || value.trim().isEmpty) {
                                 return 'please enter your email';
+                              }
+                              if (!RegExp(
+                                      r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+                                  .hasMatch(value.toString())) {
+                                return 'Please enter a valid email address';
                               }
                               // return null;
                             },
@@ -125,7 +131,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 IconBroken.Message,
                               ),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16.0),
+                                borderRadius:
+                                    BorderRadius.circular(AppSize.s16),
                               ),
                             ),
                           ),
@@ -155,7 +162,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 },
                               ),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16.0),
+                                borderRadius:
+                                    BorderRadius.circular(AppSize.s16),
                               ),
                             ),
                             onFieldSubmitted: (value) {
@@ -164,7 +172,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             },
                           ),
                           const SizedBox(
-                            height: 15,
+                            height: AppSize.s16,
                           ),
                           TextFormField(
                             validator: (String? value) {
@@ -182,12 +190,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 color: Colors.purple,
                               ),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(AppSize.s8),
                               ),
                             ),
                           ),
                           const SizedBox(
-                            height: 15,
+                            height: AppSize.s16,
                           ),
                           SizedBox(
                             width: double.infinity,
@@ -195,7 +203,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30.0),
+                                  borderRadius:
+                                      BorderRadius.circular(AppSize.s28),
                                 ),
                               ),
                               onPressed: () {
@@ -213,12 +222,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 }
                               },
                               child: const Text(
-                                'Login',
+                                'REGISTER',
                               ),
                             ),
                           ),
                           const SizedBox(
-                            height: 15,
+                            height: AppSize.s16,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,

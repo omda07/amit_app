@@ -8,6 +8,7 @@ import 'package:amit_app/shared/component.dart';
 import 'package:amit_app/shared/resources/color_manager.dart';
 import 'package:amit_app/shared/resources/values_manager.dart';
 import 'package:amit_app/shared/styles/icon_broken.dart';
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -19,6 +20,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  //controllers
   var emailController = TextEditingController();
   var passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
@@ -32,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
           if (state is LoginSuccessState) {
             if (state.loginModel.status!) {
               CacheHelper.saveData(
-                      key: 'token', value: state.loginModel.data!.token)
+                      key: token.toString(), value: state.loginModel.data!.token)
                   .then((value) {
                 token = state.loginModel.data!.token!;
                 navigateAndFinish(context, Home());
@@ -48,18 +50,18 @@ class _LoginScreenState extends State<LoginScreen> {
             appBar: AppBar(),
             body: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(AppPadding.p20),
                 child: Column(
                   children: [
                     Container(
                       padding: const EdgeInsets.all(AppPadding.p14),
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
+                        borderRadius: BorderRadius.circular(AppSize.s16),
                         color: ColorManager.swatch,
                       ),
+                      //login logo
                       child: Column(
-                        // alignment: AlignmentDirectional.bottomCenter,
                         children: [
                           Text(
                             'Orange Digital Ceneter',
@@ -67,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 .textTheme
                                 .headline5!
                                 .copyWith(
-                                    color: ColorManager.white,
+                                    color: Colors.white,
                                     fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(
@@ -88,10 +90,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         children: [
                           TextFormField(
                             validator: (String? value) {
-                              if (value == null || value.trim().isEmpty) {
-                                return 'please enter your email';
+                              if (value!.isEmpty) {
+                                return 'Email is required';
                               }
-                              // return null;
+
+                              if (!RegExp(
+                                      r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+                                  .hasMatch(value.toString())) {
+                                return 'Please enter a valid email address';
+                              }
                             },
                             keyboardType: TextInputType.emailAddress,
                             controller: emailController,
@@ -101,17 +108,20 @@ class _LoginScreenState extends State<LoginScreen> {
                                 IconBroken.Message,
                               ),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16.0),
+                                borderRadius: BorderRadius.circular(AppSize.s16),
                               ),
                             ),
                           ),
                           const SizedBox(
-                            height: 15,
+                            height: AppSize.s16,
                           ),
                           TextFormField(
                             validator: (String? value) {
                               if (value == null || value.trim().isEmpty) {
-                                return 'password too short';
+                                return 'Password is required';
+                              }
+                              if (value.length < 5 || value.length > 20) {
+                                return 'Password must be betweem 5 and 20 characters';
                               }
                               //return null;
                             },
@@ -131,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 },
                               ),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16.0),
+                                borderRadius: BorderRadius.circular(AppSize.s16),
                               ),
                             ),
                             onFieldSubmitted: (value) {
@@ -146,32 +156,39 @@ class _LoginScreenState extends State<LoginScreen> {
                           const SizedBox(
                             height: 15,
                           ),
-                          SizedBox(
-                            width: double.infinity,
-                            height: 50.0,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30.0),
+                          ConditionalBuilder(
+                            condition: state is! LoginLoadingState,
+                            builder: (context) => SizedBox(
+                              width: double.infinity,
+                              height: 50.0,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(AppSize.s28),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  if (formKey.currentState != null &&
+                                      formKey.currentState!.validate()) {
+                                    LoginCubit.get(context).userLogin(
+                                        email: emailController.text,
+                                        password: passwordController.text);
+                                    print(emailController.text);
+                                    print(passwordController.text);
+                                  } else {
+                                    print('not validated');
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                            content: Text('invalid')));
+                                  }
+                                },
+                                child: const Text(
+                                  'Login',
                                 ),
                               ),
-                              onPressed: () {
-                                if (formKey.currentState != null &&
-                                    formKey.currentState!.validate()) {
-                                  LoginCubit.get(context).userLogin(
-                                      email: emailController.text,
-                                      password: passwordController.text);
-                                  print(emailController.text);
-                                  print(passwordController.text);
-                                } else {
-                                  print('not validated');
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text('invalid')));
-                                }
-                              },
-                              child: const Text(
-                                'Login',
-                              ),
+                            ),
+                            fallback: (context) => const Center(
+                              child: CircularProgressIndicator(),
                             ),
                           ),
                           const SizedBox(
