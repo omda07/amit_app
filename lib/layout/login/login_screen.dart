@@ -8,9 +8,12 @@ import 'package:amit_app/shared/component.dart';
 import 'package:amit_app/shared/resources/color_manager.dart';
 import 'package:amit_app/shared/resources/values_manager.dart';
 import 'package:amit_app/shared/styles/icon_broken.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -34,14 +37,26 @@ class _LoginScreenState extends State<LoginScreen> {
           if (state is LoginSuccessState) {
             if (state.loginModel.status!) {
               CacheHelper.saveData(
-                      key: token.toString(), value: state.loginModel.data!.token)
+                      key: token.toString(),
+                      value: state.loginModel.data!.token)
                   .then((value) {
                 token = state.loginModel.data!.token!;
                 navigateAndFinish(context, Home());
               });
-              print('${state.loginModel.message}');
+              showTopSnackBar(
+                context,
+                CustomSnackBar.success(
+                  backgroundColor: ColorManager.swatch,
+                  message: '${state.loginModel.message}',
+                ),
+              );
             } else {
-              print('${state.loginModel.message}');
+              showTopSnackBar(
+                context,
+                CustomSnackBar.error(
+                  message: 'sec if ${state.loginModel.message}',
+                ),
+              );
             }
           }
         },
@@ -63,14 +78,25 @@ class _LoginScreenState extends State<LoginScreen> {
                       //login logo
                       child: Column(
                         children: [
-                          Text(
-                            'Orange Digital Ceneter',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline5!
-                                .copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
+                          Center(
+                            child: DefaultTextStyle(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline5!
+                                  .copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                              child: AnimatedTextKit(
+                                pause: const Duration(seconds: 3),
+                                animatedTexts: [
+                                  TypewriterAnimatedText(
+                                      'Orange Digital Center'),
+                                ],
+                                onTap: () {
+                                  print("Tap Event");
+                                },
+                              ),
+                            ),
                           ),
                           const SizedBox(
                             height: AppSize.s12,
@@ -108,7 +134,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 IconBroken.Message,
                               ),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(AppSize.s16),
+                                borderRadius:
+                                    BorderRadius.circular(AppSize.s16),
                               ),
                             ),
                           ),
@@ -141,15 +168,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                 },
                               ),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(AppSize.s16),
+                                borderRadius:
+                                    BorderRadius.circular(AppSize.s16),
                               ),
                             ),
                             onFieldSubmitted: (value) {
                               if (formKey.currentState != null &&
                                   formKey.currentState!.validate()) {
                                 LoginCubit.get(context).userLogin(
-                                    email: emailController.text,
-                                    password: passwordController.text);
+                                  email: emailController.text,
+                                  password: passwordController.text,
+                                );
                               }
                             },
                           ),
@@ -164,22 +193,22 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(AppSize.s28),
+                                    borderRadius:
+                                        BorderRadius.circular(AppSize.s28),
                                   ),
                                 ),
                                 onPressed: () {
                                   if (formKey.currentState != null &&
                                       formKey.currentState!.validate()) {
                                     LoginCubit.get(context).userLogin(
-                                        email: emailController.text,
-                                        password: passwordController.text);
+                                      email: emailController.text,
+                                      password: passwordController.text,
+                                    );
+
                                     print(emailController.text);
                                     print(passwordController.text);
                                   } else {
                                     print('not validated');
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                            content: Text('invalid')));
                                   }
                                 },
                                 child: const Text(

@@ -32,6 +32,16 @@ class AppCubit extends Cubit<AppStates> {
     CartsScreen(),
     FavoritesScreen(),
   ];
+  int quantity = 1;
+  void changeQuantityInc() {
+    quantity++;
+    emit(AppChangeQuantityIncState());
+  }
+
+  void changeQuantityDec() {
+    quantity--;
+    emit(AppChangeQuantityDecState());
+  }
 
   void changeBottom(int index) {
     currentIndex = index;

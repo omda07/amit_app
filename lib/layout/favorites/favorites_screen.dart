@@ -5,6 +5,8 @@ import 'package:amit_app/shared/styles/icon_broken.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({Key? key}) : super(key: key);
@@ -12,24 +14,46 @@ class FavoritesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AppCubit, AppStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is AppSuccessChangeFavoritesState) {
+          if (state.model.status!) {
+            showTopSnackBar(
+              context,
+              CustomSnackBar.success(
+                backgroundColor: ColorManager.swatch,
+                message: '${state.model.message}',
+              ),
+            );
+          } else {
+            showTopSnackBar(
+              context,
+              CustomSnackBar.error(
+                message: '${state.model.message}',
+              ),
+            );
+          }
+        }
+      },
       builder: (context, state) {
-        return ConditionalBuilder(
-          condition: state is! AppLoadingGetFavoritesState,
-          builder: (context) => ListView.separated(
-            itemBuilder: (context, index) => buildListProduct(
-                AppCubit.get(context)
-                    .favoritesModel!
-                    .data!
-                    .data![index]
-                    .product,
-                context),
-            separatorBuilder: (context, index) => const Divider(),
-            itemCount: AppCubit.get(context).favoritesModel!.data!.data!.length,
-            physics: const BouncingScrollPhysics(),
+        return Scaffold(
+          body: ConditionalBuilder(
+            condition: AppCubit.get(context).changeFavoritesModel != null,
+            builder: (context) => ListView.separated(
+              itemBuilder: (context, index) => buildListProduct(
+                  AppCubit.get(context)
+                      .favoritesModel!
+                      .data!
+                      .data![index]
+                      .product,
+                  context),
+              separatorBuilder: (context, index) => const Divider(),
+              itemCount:
+                  AppCubit.get(context).favoritesModel!.data!.data!.length,
+              physics: const BouncingScrollPhysics(),
+            ),
+            fallback: (context) =>
+                const Center(child: CircularProgressIndicator()),
           ),
-          fallback: (context) =>
-              const Center(child: CircularProgressIndicator()),
         );
       },
     );

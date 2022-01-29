@@ -6,6 +6,8 @@ import 'package:amit_app/shared/styles/icon_broken.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
   final ProductModel productModel;
@@ -18,7 +20,44 @@ class ProductDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return BlocConsumer<AppCubit, AppStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is AppSuccessChangeCartsState) {
+          if (state.model.status!) {
+            showTopSnackBar(
+              context,
+              CustomSnackBar.success(
+                backgroundColor: ColorManager.swatch,
+                message: '${state.model.message}',
+              ),
+            );
+          } else {
+            showTopSnackBar(
+              context,
+              CustomSnackBar.error(
+                message: '${state.model.message}',
+              ),
+            );
+          }
+        }
+        if (state is AppSuccessChangeFavoritesState) {
+          if (state.model.status!) {
+            showTopSnackBar(
+              context,
+              CustomSnackBar.success(
+                backgroundColor: ColorManager.swatch,
+                message: '${state.model.message}',
+              ),
+            );
+          } else {
+            showTopSnackBar(
+              context,
+              CustomSnackBar.error(
+                message: '${state.model.message}',
+              ),
+            );
+          }
+        }
+      },
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
@@ -73,9 +112,9 @@ class ProductDetailsScreen extends StatelessWidget {
                 left: AppPadding.p20,
                 right: AppPadding.p20,
               ),
-              decoration: const BoxDecoration(
-                color: Colors.orange,
-                borderRadius: BorderRadius.only(
+              decoration: BoxDecoration(
+                color: ColorManager.swatch,
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(AppSize.s24),
                   topRight: Radius.circular(AppSize.s24),
                 ),
@@ -86,7 +125,7 @@ class ProductDetailsScreen extends StatelessWidget {
                   const SizedBox(height: AppPadding.p8),
                   // CounterWithFavBtn(),
 
-                  counter(context),
+                  counter(context: context, product: productModel),
                   const Spacer(),
                   // add to cart widget
                   addToCart(product: product, context: context, state: state),
@@ -115,7 +154,10 @@ class ProductDetailsScreen extends StatelessWidget {
   }
 
 // quantity widget
-  Widget counter(BuildContext context) {
+  Widget counter({
+    required BuildContext context,
+    required ProductModel product,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
       child: Row(
@@ -125,7 +167,9 @@ class ProductDetailsScreen extends StatelessWidget {
             height: 32,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(primary: Colors.white),
-              onPressed: () {},
+              onPressed: () {
+                AppCubit.get(context).changeQuantityInc();
+              },
               child: Icon(
                 IconBroken.Plus,
                 color: Theme.of(context).iconTheme.color,
@@ -135,7 +179,7 @@ class ProductDetailsScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppPadding.p16),
             child: Text(
-              '1',
+              '${AppCubit.get(context).quantity}',
               style: Theme.of(context)
                   .textTheme
                   .headline6!
@@ -147,7 +191,9 @@ class ProductDetailsScreen extends StatelessWidget {
             height: 32,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(primary: Colors.white),
-              onPressed: () {},
+              onPressed: () {
+                AppCubit.get(context).changeQuantityDec();
+              },
               child: Icon(
                 IconBroken.Paper_Negative,
                 color: Theme.of(context).iconTheme.color,
@@ -156,13 +202,17 @@ class ProductDetailsScreen extends StatelessWidget {
           ),
           const Spacer(),
           IconButton(
-            iconSize: AppSize.s28,
-            onPressed: () {},
-            icon: const Icon(
-              IconBroken.Heart,
-              color: Colors.white,
+            onPressed: () {
+              AppCubit.get(context).changeFavorites(product.id!);
+              print(product.id);
+            },
+            icon: Icon(
+              AppCubit.get(context).favorites[product.id]!
+                  ? Icons.favorite_rounded
+                  : IconBroken.Heart,
+              size: AppSize.s16 * 2,
             ),
-          )
+          ),
         ],
       ),
     );
@@ -310,10 +360,10 @@ class ProductDetailsScreen extends StatelessWidget {
                 onPressed: () {},
                 child: Text(
                   "Buy  Now".toUpperCase(),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.bold,
-                    color: Colors.orange,
+                    color: ColorManager.swatch,
                   ),
                 ),
               ),

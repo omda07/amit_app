@@ -6,6 +6,10 @@ class AppInitial extends AppStates {}
 
 class AppChangeBottomNavState extends AppStates {}
 
+class AppChangeQuantityIncState extends AppStates {}
+
+class AppChangeQuantityDecState extends AppStates {}
+
 class AppLoadingHomeDataState extends AppStates {}
 
 class AppSuccessHomeDataState extends AppStates {}

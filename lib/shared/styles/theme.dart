@@ -7,8 +7,11 @@ import 'package:flutter/services.dart';
 var defualtColor = ColorManager.swatch;
 ThemeData lightTheme = ThemeData(
   backgroundColor: Colors.white,
-  appBarTheme: const AppBarTheme(
-    iconTheme: IconThemeData(color: Colors.black),
+  appBarTheme: AppBarTheme(
+    actionsIconTheme: IconThemeData(
+      color: defualtColor,
+    ),
+    iconTheme: IconThemeData(color: defualtColor),
     // backwardsCompatibility: false,
     systemOverlayStyle: SystemUiOverlayStyle(
       statusBarColor: Colors.white,
@@ -19,7 +22,7 @@ ThemeData lightTheme = ThemeData(
     titleTextStyle: TextStyle(
       fontFamily: FontConstants.fontFamily,
       color: Colors.black,
-      fontSize: 20.0,
+      fontSize: FontSize.s20,
       fontWeight: FontWeight.bold,
     ),
   ),
@@ -27,17 +30,17 @@ ThemeData lightTheme = ThemeData(
   bottomNavigationBarTheme: BottomNavigationBarThemeData(
     type: BottomNavigationBarType.fixed,
     selectedItemColor: defualtColor,
-    elevation: 10.0,
+    elevation: AppSize.s18,
     backgroundColor: Colors.white,
   ),
   textTheme: const TextTheme(
     bodyText1: TextStyle(
-      fontSize: 18.0,
+      fontSize: FontSize.s16,
       fontWeight: FontWeight.w600,
       color: Colors.black,
     ),
     subtitle1: TextStyle(
-      fontSize: 14.0,
+      fontSize: FontSize.s14,
       fontWeight: FontWeight.w600,
       color: Colors.black,
       height: 1.3,

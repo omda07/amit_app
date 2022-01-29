@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+
 class LoginCubit extends Cubit<LoginStates> {
   LoginCubit() : super(LoginInitialState());
 
@@ -26,9 +27,11 @@ class LoginCubit extends Cubit<LoginStates> {
       print(value.data);
 
       loginModel = LoginModel.fromJson(value.data);
+
       emit(LoginSuccessState(loginModel));
     }).catchError((error) {
       print(error.toString());
+
       emit(LoginErrorState(error.toString()));
     });
   }

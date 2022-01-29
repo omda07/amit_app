@@ -23,7 +23,7 @@ class CartModel {
 }
 
 class Data {
-  List<CartItems>? cartItems;
+  List<CartItems>? cartItems = [];
   dynamic subTotal;
   dynamic total;
 
@@ -33,7 +33,7 @@ class Data {
     if (json['cart_items'] != null) {
       cartItems = <CartItems>[];
       json['cart_items'].forEach((v) {
-        cartItems!.add( CartItems.fromJson(v));
+        cartItems!.add(CartItems.fromJson(v));
       });
     }
     subTotal = json['sub_total'];
@@ -41,7 +41,7 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     if (cartItems != null) {
       data['cart_items'] = cartItems!.map((v) => v.toJson()).toList();
     }
@@ -62,11 +62,11 @@ class CartItems {
     id = json['id'];
     quantity = json['quantity'];
     product =
-        json['product'] != null ?  Product.fromJson(json['product']) : null;
+        json['product'] != null ? Product.fromJson(json['product']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['quantity'] = quantity;
     if (product != null) {
@@ -114,7 +114,7 @@ class Product {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['price'] = price;
     data['old_price'] = oldPrice;

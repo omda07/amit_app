@@ -4,10 +4,14 @@ import 'package:amit_app/models/home_model.dart';
 import 'package:amit_app/shared/component.dart';
 import 'package:amit_app/shared/resources/color_manager.dart';
 import 'package:amit_app/shared/resources/values_manager.dart';
+import 'package:amit_app/shared/styles/icon_broken.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class ProductsScreen extends StatelessWidget {
   const ProductsScreen({Key? key}) : super(key: key);
@@ -15,7 +19,26 @@ class ProductsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AppCubit, AppStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is AppSuccessChangeFavoritesState) {
+          if (state.model.status!) {
+            showTopSnackBar(
+              context,
+              CustomSnackBar.success(
+                backgroundColor: ColorManager.swatch,
+                message: '${state.model.message}',
+              ),
+            );
+          } else {
+            showTopSnackBar(
+              context,
+              CustomSnackBar.error(
+                message: '${state.model.message}',
+              ),
+            );
+          }
+        }
+      },
       builder: (context, state) {
         Size size = MediaQuery.of(context).size;
         return Scaffold(
@@ -39,6 +62,38 @@ class ProductsScreen extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
+            Padding(
+              padding: const EdgeInsets.all(AppPadding.p20),
+              child: CarouselSlider(
+                options: CarouselOptions(
+                  height: 200,
+                  initialPage: 0,
+                  viewportFraction: 1.0,
+                  enableInfiniteScroll: true,
+                  reverse: false,
+                  autoPlay: true,
+                  autoPlayInterval: const Duration(seconds: 3),
+                  autoPlayAnimationDuration: const Duration(seconds: 1),
+                  autoPlayCurve: Curves.fastOutSlowIn,
+                  scrollDirection: Axis.horizontal,
+                ),
+                items: model.data!.products
+                    .map(
+                      (e) => Container(
+                        width: double.infinity,
+                        height: AppSize.s100 * 1.5,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(AppSize.s16),
+                            border: Border.all(color: ColorManager.swatch),
+                            color: Colors.white),
+                        child: Image(
+                          image: NetworkImage('${e.image}'),
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+            ),
             Container(
               padding: const EdgeInsets.all(AppPadding.p20),
               child: GridView.builder(
@@ -84,7 +139,7 @@ class ProductsScreen extends StatelessWidget {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: Colors.orange,
+                  color: ColorManager.swatch,
                 ),
               ),
               //animate the image
@@ -155,7 +210,7 @@ class ProductsScreen extends StatelessWidget {
                 icon: Icon(
                   AppCubit.get(context).favorites[product.id]!
                       ? Icons.favorite_rounded
-                      : Icons.favorite_border_outlined,
+                      : IconBroken.Heart,
                   //size: 14.0,
                 ),
               ),

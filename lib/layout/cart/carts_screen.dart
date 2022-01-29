@@ -6,6 +6,8 @@ import 'package:amit_app/shared/styles/icon_broken.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class CartsScreen extends StatelessWidget {
   const CartsScreen({Key? key}) : super(key: key);
@@ -13,16 +15,35 @@ class CartsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AppCubit, AppStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is AppSuccessChangeCartsState) {
+          if (state.model.status!) {
+            showTopSnackBar(
+              context,
+              CustomSnackBar.success(
+                backgroundColor: ColorManager.swatch,
+                message: '${state.model.message}',
+              ),
+            );
+          } else {
+            showTopSnackBar(
+              context,
+              CustomSnackBar.error(
+                message: '${state.model.message}',
+              ),
+            );
+          }
+        }
+      },
       builder: (context, state) {
-        return ConditionalBuilder(
-          condition: state is! AppLoadingGetCartState,
-          builder: (context) => Padding(
-            padding: const EdgeInsets.all(AppPadding.p12),
-            child: Column(
-              children: [
-                Expanded(
-                  child: ListView.separated(
+        return Padding(
+          padding: const EdgeInsets.all(AppPadding.p12),
+          child: Column(
+            children: [
+              Expanded(
+                child: ConditionalBuilder(
+                  condition: AppCubit.get(context).changeCartsModel != null,
+                  builder: (context) => ListView.separated(
                     itemBuilder: (context, index) => buildListProduct(
                         AppCubit.get(context)
                             .cartModel!
@@ -38,58 +59,58 @@ class CartsScreen extends StatelessWidget {
                         .length,
                     physics: const BouncingScrollPhysics(),
                   ),
+                  fallback: (context) => const Center(
+                    child: CircularProgressIndicator(),
+                  ),
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: ColorManager.swatch),
-                            borderRadius: BorderRadius.circular(AppSize.s16)),
-                        height: 50,
-                        child: ElevatedButton(
-                          style:
-                              ElevatedButton.styleFrom(primary: Colors.white),
-                          onPressed: () {},
-                          child: Text(
-                            "Clear  Cart".toUpperCase(),
-                            style: TextStyle(
-                              fontSize: FontSize.s16,
-                              fontWeight: FontWeight.bold,
-                              color: ColorManager.swatch,
-                            ),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(color: ColorManager.swatch),
+                          borderRadius: BorderRadius.circular(AppSize.s16)),
+                      height: 50,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(primary: Colors.white),
+                        onPressed: () {},
+                        child: Text(
+                          "Clear  Cart".toUpperCase(),
+                          style: TextStyle(
+                            fontSize: FontSize.s16,
+                            fontWeight: FontWeight.bold,
+                            color: ColorManager.swatch,
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(
-                      width: AppSize.s8,
-                    ),
-                    Expanded(
-                      child: SizedBox(
-                        height: 50,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              primary: ColorManager.swatch),
-                          onPressed: () {},
-                          child: Text(
-                            "Buy  Now".toUpperCase(),
-                            style: const TextStyle(
-                              fontSize: FontSize.s16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
+                  ),
+                  const SizedBox(
+                    width: AppSize.s8,
+                  ),
+                  Expanded(
+                    child: SizedBox(
+                      height: 50,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            primary: ColorManager.swatch),
+                        onPressed: () {},
+                        child: Text(
+                          "Buy  Now".toUpperCase(),
+                          style: const TextStyle(
+                            fontSize: FontSize.s16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
-          fallback: (context) =>
-              const Center(child: CircularProgressIndicator()),
         );
       },
     );
@@ -103,7 +124,7 @@ class CartsScreen extends StatelessWidget {
       Container(
         color: Colors.white,
         child: Padding(
-          padding: const EdgeInsets.all(AppPadding.p20),
+          padding: const EdgeInsets.all(AppPadding.p8),
           child: SizedBox(
             height: 120.0,
             child: Row(
@@ -113,7 +134,7 @@ class CartsScreen extends StatelessWidget {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(AppSize.s16),
                     border: Border.all(
-                      color: Colors.orange,
+                      color: ColorManager.swatch,
                     ),
                   ),
                   child: Stack(
@@ -127,7 +148,7 @@ class CartsScreen extends StatelessWidget {
                       ),
                       if (model.discount != 0 && isOldPrice)
                         Container(
-                          margin: EdgeInsets.all(4),
+                          margin: const EdgeInsets.all(4),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 5.0,
                           ),
@@ -154,14 +175,30 @@ class CartsScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        model.name,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 14.0,
-                          height: 1.3,
-                        ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              model.name,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 14.0,
+                                height: 1.3,
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(
+                              IconBroken.Delete,
+                            ),
+                            onPressed: () {
+                              AppCubit.get(context).changeCarts(model.id!);
+
+                              print(model.id);
+                            },
+                          ),
+                        ],
                       ),
                       Row(
                         children: <Widget>[
@@ -171,7 +208,9 @@ class CartsScreen extends StatelessWidget {
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   primary: Colors.white),
-                              onPressed: () {},
+                              onPressed: () {
+                                AppCubit.get(context).changeQuantityInc();
+                              },
                               child: Icon(
                                 IconBroken.Plus,
                                 color: Theme.of(context).iconTheme.color,
@@ -182,7 +221,7 @@ class CartsScreen extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: AppPadding.p16),
                             child: Text(
-                              '1',
+                              '${AppCubit.get(context).quantity}',
                               style: Theme.of(context)
                                   .textTheme
                                   .headline6!
@@ -195,7 +234,9 @@ class CartsScreen extends StatelessWidget {
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   primary: Colors.white),
-                              onPressed: () {},
+                              onPressed: () {
+                                AppCubit.get(context).changeQuantityDec();
+                              },
                               child: Icon(
                                 IconBroken.Paper_Negative,
                                 color: Theme.of(context).iconTheme.color,
