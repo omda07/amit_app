@@ -96,6 +96,103 @@ class ProductDetailsScreen extends StatelessWidget {
     );
   }
 
+//image and title widget
+  Widget imageWithTitle(
+      {required ProductModel product, required BuildContext context}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppPadding.p20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Text(
+            "Amit Shop",
+          ),
+          Text(
+            '${product.name}',
+            style: Theme.of(context)
+                .textTheme
+                .headline5!
+                .copyWith(fontWeight: FontWeight.bold, color: Colors.black),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: AppSize.s20),
+          Row(
+            children: <Widget>[
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                        text: "Price\n",
+                        style: Theme.of(context).textTheme.subtitle1),
+                    TextSpan(
+                      text: "${product.price} EGP\n",
+                      style: Theme.of(context).textTheme.headline6!.copyWith(
+                          color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
+                    if (product.discount != 0)
+                      TextSpan(
+                        text: product.oldPrice.toString(),
+                        style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                              fontSize: 14.0,
+                              color: Colors.grey,
+                              decoration: TextDecoration.lineThrough,
+                            ),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: AppSize.s20),
+              Expanded(
+                child: Hero(
+                  tag: "${product.id}",
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Container(
+                      color: Colors.white,
+                      height: 180,
+                      width: 250,
+                      child: Stack(
+                        alignment: AlignmentDirectional.bottomStart,
+                        children: [
+                          Image(
+                            image: NetworkImage('${product.image}'),
+                            // fit: BoxFit.cover,
+                            width: 250,
+                            height: 180,
+                          ),
+                          if (product.discount != 0)
+                            Container(
+                              margin: const EdgeInsets.all(4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 5.0,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                color: ColorManager.swatch,
+                              ),
+                              child: Text(
+                                'DISCOUNT',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText2!
+                                    .copyWith(
+                                        color: Colors.white, fontSize: 10),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
   Widget productDetails(
           {required ProductModel product,
           required BuildContext context,
@@ -206,110 +303,18 @@ class ProductDetailsScreen extends StatelessWidget {
               AppCubit.get(context).changeFavorites(product.id!);
               print(product.id);
             },
-            icon: Icon(
-              AppCubit.get(context).favorites[product.id]!
-                  ? Icons.favorite_rounded
-                  : IconBroken.Heart,
-              size: AppSize.s16 * 2,
+            icon: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(AppSize.s8),
+                  color: Colors.white),
+              child: Icon(
+                AppCubit.get(context).favorites[product.id]!
+                    ? Icons.favorite_rounded
+                    : IconBroken.Heart,
+                size: AppSize.s16 * 2,
+              ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-//image and title widget
-  Widget imageWithTitle(
-      {required ProductModel product, required BuildContext context}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppPadding.p20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const Text(
-            "Amit Shop",
-          ),
-          Text(
-            '${product.name}',
-            style: Theme.of(context)
-                .textTheme
-                .headline5!
-                .copyWith(fontWeight: FontWeight.bold, color: Colors.black),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: AppSize.s20),
-          Row(
-            children: <Widget>[
-              RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                        text: "Price\n",
-                        style: Theme.of(context).textTheme.subtitle1),
-                    TextSpan(
-                      text: "${product.price} EGP\n",
-                      style: Theme.of(context).textTheme.headline6!.copyWith(
-                          color: Colors.black, fontWeight: FontWeight.bold),
-                    ),
-                    if (product.discount != 0)
-                      TextSpan(
-                        text: product.oldPrice.toString(),
-                        style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                              fontSize: 14.0,
-                              color: Colors.grey,
-                              decoration: TextDecoration.lineThrough,
-                            ),
-                      ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: AppSize.s20),
-              Expanded(
-                child: Hero(
-                  tag: "${product.id}",
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: Container(
-                      color: Colors.white,
-                      height: 180,
-                      width: 250,
-                      child: Stack(
-                        alignment: AlignmentDirectional.bottomStart,
-                        children: [
-                          Image(
-                            image: NetworkImage('${product.image}'),
-                            // fit: BoxFit.cover,
-                            width: 250,
-                            height: 180,
-                          ),
-                          if (product.discount != 0)
-                            Container(
-                              margin: const EdgeInsets.all(4),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 5.0,
-                              ),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(6),
-                                color: ColorManager.swatch,
-                              ),
-                              child: Text(
-                                'DISCOUNT',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2!
-                                    .copyWith(
-                                        color: Colors.white, fontSize: 10),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              )
-            ],
-          )
         ],
       ),
     );
@@ -349,7 +354,9 @@ class ProductDetailsScreen extends StatelessWidget {
               ),
             ),
             fallback: (context) => const Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                color: Colors.white,
+              ),
             ),
           ),
           Expanded(
